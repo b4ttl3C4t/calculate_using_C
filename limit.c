@@ -29,6 +29,10 @@ int main(void)
     printf("%lf", result);
 }
 
+/*The iterative version of bisection method
+ *to find the approximation of the given root
+ *base on the mean value therom.
+ */
 void limit_to_zero(double (*function)(double))
 {
     int i;
