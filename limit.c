@@ -7,11 +7,16 @@
 
 void limit_to_zero(double (*)(double));
 //The iterative bisection method.
-double iter_bisect_method        (double upper, double lower, double target);
+double iter_bisect_method           (double upper, double lower, double target);
 
-double definite_integral_right(double, double, double, double (double));
-double definite_integral_trapezium(double, double, double, double (double));
-double definite_integral_Simpson(double, double, double (double));
+double numerical_differentiation    (double, double (double));
+double right_derivative             (double, double (double));
+double middle_derivative            (double, double (double));
+
+double numerical_integration        (double, double, double, double (double));
+double definite_integral_right      (double, double, double, double (double));
+double definite_integral_trapezium  (double, double, double, double (double));
+double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
