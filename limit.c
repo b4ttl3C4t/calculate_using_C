@@ -71,6 +71,18 @@ double iter_bisect_method(double lower_limit, double upper_limit, double target)
     return middle;
 }
 
+double numerical_integration(double lower, double upper, double partition, double func(double))
+{
+    printf("definite_integral_right with domain from %lf to %lf is %lf\n", 
+        lower, upper, definite_integral_right(lower, upper, partition, func));
+
+    printf("definite_integral_trapezium with domain from %lf to %lf is %lf\n", 
+        lower, upper, definite_integral_trapezium(lower, upper, partition, func));
+    
+    printf("definite_integral_Simpson with domain from %lf to %lf is %lf\n", 
+        lower, upper, definite_integral_Simpson(lower, upper, func));
+}
+
 //Calculating definite integral by right side height.
 double definite_integral_right(double lower, double upper, double partition, double func(double))
 {
