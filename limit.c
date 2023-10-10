@@ -118,6 +118,12 @@ void numerical_integration(double func(double))
     scanf("%lf", &partition);
     getchar();
 
+    if(partition < 1)
+    {
+        fprintf(stderr, "The partition shouldn't be less than 1.");
+        return ;
+    }
+
     printf("definite_integral_right with domain from %lf to %lf is %lf\n", 
         lower, upper, definite_integral_right(lower, upper, partition, func));
 
