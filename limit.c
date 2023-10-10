@@ -7,29 +7,27 @@
 
 void limit_to_zero(double (*)(double));
 //The iterative bisection method.
-double iter_bisect_method           (double upper, double lower, double target);
+double iter_bisect_method           (double, double, double);
 
-double numerical_differentiation    (double, double (double));
-double right_derivative             (double, double (double));
-double middle_derivative            (double, double (double));
+void   numerical_differentiation    (double (double));
+double right_derivative             (double, double, double (double));
+double symmetric_derivative         (double, double, double (double));
+double five_point_derivative        (double, double, double (double));
 
-double numerical_integration        (double, double, double, double (double));
+void   numerical_integration        (double (double));
 double definite_integral_right      (double, double, double, double (double));
 double definite_integral_trapezium  (double, double, double, double (double));
 double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return sin(x) / x;
+    return x * x;
 }
 
 int main(void)
 {
-    double target;
-    scanf("%lf", &target);
-    
-    double result = iter_bisect_method(LOWER, UPPER, target);
-    printf("%lf", result);
+    numerical_differentiation(f);
+    numerical_integration(f);
 }
 
 /*The iterative version of bisection method
@@ -71,8 +69,55 @@ double iter_bisect_method(double lower_limit, double upper_limit, double target)
     return middle;
 }
 
-double numerical_integration(double lower, double upper, double partition, double func(double))
+void numerical_differentiation(double f(double))
 {
+    double x, h;
+
+    printf("\n%s", "> Enter the x :");
+    scanf("%lf", &x);
+    getchar();
+
+    printf("\n%s", "> Enter the h :");
+    scanf("%lf", &h);
+    getchar();
+
+    printf("right_derivative approach to %lf is %lf\n", 
+        x, right_derivative(x, h, f));
+
+    printf("symmetric_derivative approach to %lf is %lf\n", 
+        x, symmetric_derivative(x, h, f));
+    
+    printf("five_point_derivative approach to %lf is %lf\n", 
+        x, five_point_derivative(x, h, f));
+}
+
+double right_derivative(double x, double h, double f(double))
+{
+    return (f(x + h) - f(x)) / h;
+}
+
+double symmetric_derivative(double x, double h, double f(double))
+{
+    return (f(x + h) - f(x - h)) / (2 * h);
+}
+
+double five_point_derivative(double x, double h, double f(double))
+{
+    return (f(x - 2*h) + 8 * f(x + h) - 8 * f(x - h) -f(x + 2*h)) / (12 * h);
+}
+
+void numerical_integration(double func(double))
+{
+    double lower, upper, partition;
+
+    printf("\n%s", "> Enter the lower and upper :");
+    scanf("%lf%lf", &lower, &upper);
+    getchar();
+
+    printf("\n%s", "> Enter the partition :");
+    scanf("%lf", &partition);
+    getchar();
+
     printf("definite_integral_right with domain from %lf to %lf is %lf\n", 
         lower, upper, definite_integral_right(lower, upper, partition, func));
 
