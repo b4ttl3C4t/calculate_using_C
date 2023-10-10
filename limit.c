@@ -21,7 +21,12 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return x * x;
+    if(x == 0)
+    {
+        fprintf(stderr, "\n%s", "> The process must not be divided by 0.");
+        return 0;
+    }
+    return sin(x) / x;
 }
 
 int main(void)
@@ -120,7 +125,7 @@ void numerical_integration(double func(double))
 
     if(partition < 1)
     {
-        fprintf(stderr, "The partition shouldn't be less than 1.");
+        fprintf(stderr, "\n%s", "> The partition shouldn't be less than 1.");
         return ;
     }
 
