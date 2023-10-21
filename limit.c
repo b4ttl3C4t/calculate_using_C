@@ -21,18 +21,13 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    if(x == 0)
-    {
-        fprintf(stderr, "\n%s", "> The process must not be divided by 0.");
-        return 0;
-    }
-    return sin(x) / x;
+    return pow((x*x*x - 2*x + 8), 4);
 }
 
 int main(void)
 {
     numerical_differentiation(f);
-    numerical_integration(f);
+    //numerical_integration(f);
 }
 
 /*The iterative version of bisection method
