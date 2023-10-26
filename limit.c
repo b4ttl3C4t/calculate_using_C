@@ -13,10 +13,14 @@ void limit_to_zero(double (*)(double));
 double iter_bisect_method   (double);
 double Newton_method        (double);
 
-void   numerical_differentiation    (double (double));
+void   differentiation              (double (double));
 double right_derivative             (double, double, double (double));
 double symmetric_derivative         (double, double, double (double));
 double five_point_derivative        (double, double, double (double));
+void   second_differentiation       (double (double));
+double second_right_derivative      (double, double, double (double));
+double second_symmetric_derivative  (double, double, double (double));
+double second_five_point_derivative (double, double, double (double));
 
 void   numerical_integration        (double (double));
 double definite_integral_right      (double, double, double, double (double));
@@ -25,13 +29,14 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return pow((x*x*x - 2*x + 8), 4);
+    return pow(x, 2);
 }
 
 int main(void)
 {begin = clock();
 
-    printf("%f",iter_bisect_method(2));
+    differentiation(f);
+    second_differentiation(f);
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
@@ -81,7 +86,7 @@ double Newton_method(double target)
     
 }
 
-void numerical_differentiation(double f(double))
+void differentiation(double f(double))
 {
     double x, h;
 
@@ -116,6 +121,43 @@ double symmetric_derivative(double x, double h, double f(double))
 double five_point_derivative(double x, double h, double f(double))
 {
     return (f(x - 2*h) + 8 * f(x + h) - 8 * f(x - h) -f(x + 2*h)) / (12 * h);
+}
+
+void second_differentiation(double f(double))
+{
+    double x, h;
+
+    printf("\n%s", "> Enter the x :");
+    scanf("%lf", &x);
+    getchar();
+
+    printf("\n%s", "> Enter the h :");
+    scanf("%lf", &h);
+    getchar();
+
+    printf("right_derivative approach to %lf is %lf\n", 
+        x, second_right_derivative(x, h, f));
+
+    printf("symmetric_derivative approach to %lf is %lf\n", 
+        x, second_symmetric_derivative(x, h, f));
+    
+    printf("five_point_derivative approach to %lf is %lf\n", 
+        x, second_five_point_derivative(x, h, f));
+}
+
+double second_right_derivative(double x, double h, double f(double))
+{
+    return (right_derivative(x + h, h, f) - right_derivative(x, h, f)) / h;
+}
+
+double second_symmetric_derivative(double x, double h, double f(double))
+{
+    return (symmetric_derivative(x + h, h, f) - symmetric_derivative(x, h, f)) / h;
+}
+
+double second_five_point_derivative(double x, double h, double f(double))
+{
+    return (five_point_derivative(x + h, h, f) - five_point_derivative(x, h, f)) / h;
 }
 
 void numerical_integration(double func(double))
