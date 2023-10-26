@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #define LOWER -10000000000000
 #define UPPER  10000000000000
 
+static clock_t begin, end;
+
 void limit_to_zero(double (*)(double));
 //The iterative bisection method.
-double iter_bisect_method           (double, double, double);
+double iter_bisect_method   (double);
+double Newton_method        (double);
 
 void   numerical_differentiation    (double (double));
 double right_derivative             (double, double, double (double));
@@ -25,9 +29,12 @@ double f(double x)
 }
 
 int main(void)
-{
-    numerical_differentiation(f);
-    //numerical_integration(f);
+{begin = clock();
+
+    printf("%f",iter_bisect_method(2));
+
+end = clock();
+printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
 }
 
 /*The iterative version of bisection method
@@ -44,10 +51,10 @@ void limit_to_zero(double (*function)(double))
     }
 }
 
-double iter_bisect_method(double lower_limit, double upper_limit, double target)
+double iter_bisect_method(double target)
 {
-    double lower  = lower_limit;
-    double upper  = upper_limit;
+    double lower  = LOWER;
+    double upper  = UPPER;
     double middle = (upper + lower) / 2;
     
     unsigned int i;    
@@ -67,6 +74,11 @@ double iter_bisect_method(double lower_limit, double upper_limit, double target)
     }
     
     return middle;
+}
+
+double Newton_method(double target)
+{
+    
 }
 
 void numerical_differentiation(double f(double))
