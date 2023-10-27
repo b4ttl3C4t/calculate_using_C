@@ -110,12 +110,12 @@ inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, dou
     x = fabs(x_n0 - x_n1);
     y = fabs(f_of_x);
    
-   /*
+   
     if(x < h)       //The nicety between x_n1 and x_n0 is less than h.
         return 0;
     else
         return 1;
-    */
+    
 
    /*
     if(y < h)       //The nicety of the absolute value of f(x) is less than h.
