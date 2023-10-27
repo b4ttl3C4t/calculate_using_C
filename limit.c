@@ -35,7 +35,7 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return pow(x, 2);
+    return cos(x)/x + x/cos(x);
 }
 
 int main(void)
@@ -125,7 +125,7 @@ double first_symmetric_derivative(double x, double h, double f(double))
 
 double first_five_point_derivative(double x, double h, double f(double))
 {
-    return (f(x - 2*h) + 8 * f(x + h) - 8 * f(x - h) -f(x + 2*h)) / (12 * h);
+    return (f(x - 2*h) + 8 * f(x + h) - 8 * f(x - h) - f(x + 2*h)) / (12 * h);
 }
 
 void second_differentiation(double f(double))
@@ -212,7 +212,7 @@ double recursive_symmetric_derivative(unsigned int n, double x, double h, double
     if(n == 1)
         return first_symmetric_derivative(x, h, f);
     else
-        return (recursive_symmetric_derivative(n-1, x + h, h, f) - recursive_symmetric_derivative(n-1, x, h, f)) / h;
+        return (recursive_symmetric_derivative(n-1, x + h, h, f) - recursive_symmetric_derivative(n-1, x - h, h, f)) / (2 * h);
 }
 
 double recursive_five_point_derivative(unsigned int n, double x, double h, double f(double))
@@ -222,7 +222,8 @@ double recursive_five_point_derivative(unsigned int n, double x, double h, doubl
     if(n == 1)
         return first_five_point_derivative(x, h, f);
     else
-        return (recursive_five_point_derivative(n-1, x + h, h, f) - recursive_five_point_derivative(n-1, x, h, f)) / h;
+        return (recursive_five_point_derivative(n-1, x - 2*h, h, f) + 8 * recursive_five_point_derivative(n-1, x + h, h, f) 
+                - 8 * recursive_five_point_derivative(n-1, x - h, h, f) - recursive_five_point_derivative(n-1, x + 2*h, h, f)) / (12 * h);
 }
 
 void numerical_integration(double func(double))
