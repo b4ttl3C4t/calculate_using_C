@@ -3,15 +3,16 @@
 #include <math.h>
 #include <time.h>
 
-#define LOWER -10000000000000
-#define UPPER  10000000000000
+#define LOWER           -10000000000000
+#define UPPER           10000000000000
+#define H_APPROACH_0    0.000001
 
 static clock_t begin, end;
 
-void limit_to_zero(double (*)(double));
-//The iterative bisection method.
-double iter_bisect_method   (double);
-double Newton_method        (double);
+void   limit_to_zero            (double (*)(double));
+double iter_bisect_method       (double);
+double Newton_method            (double, double (double));
+int    Newton_stopping_criteria (double, double, double, double);
 
 void   first_differentiation            (double (double));
 double first_right_derivative           (double, double, double (double));
@@ -35,13 +36,13 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return cos(x)/x + x/cos(x);
+    return x*x*x - x - 1;
 }
 
 int main(void)
 {begin = clock();
 
-    recursive_differentiation(f);
+    printf("%lf", Newton_method(1, f));
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
@@ -86,9 +87,56 @@ double iter_bisect_method(double target)
     return middle;
 }
 
-double Newton_method(double target)
+//find the root (f(x) = 0).
+double Newton_method(double initial_value, double f(double))
 {
-    
+    double x_n1, x_n0;
+    x_n1 = initial_value;
+
+    do
+    {
+        x_n0 = x_n1;
+        x_n1 = x_n0 - (f(x_n0) / first_right_derivative(x_n0, H_APPROACH_0, f));
+    }while(Newton_stopping_criteria(x_n1, x_n0, f(x_n0), H_APPROACH_0));
+
+    return x_n1;
+}
+
+inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+{
+    static double x;
+    static double y;
+
+    x = fabs(x_n0 - x_n1);
+    y = fabs(f_of_x);
+   
+   /*
+    if(x < h)       //The nicety between x_n1 and x_n0 is less than h.
+        return 0;
+    else
+        return 1;
+    */
+
+   /*
+    if(y < h)       //The nicety of the absolute value of f(x) is less than h.
+        return 0;
+    else
+        return 1;
+    */
+
+   /*
+    if(x*y < h)     //The triangle area ((x*y)/2 ~= x*y) of x and y is less than h.
+        return 0;
+    else
+        return 1;
+    */
+   
+   /*
+    if(pow(y*y - x*x, 0.5) < h)     //The length of the secant (((y*y - x*x)^(1/2)) ~= (y*y - x*x)) is less than h.
+        return 0;
+    else
+        return 1;
+    */
 }
 
 void first_differentiation(double f(double))
