@@ -42,7 +42,8 @@ double f(double x)
 int main(void)
 {begin = clock();
 
-    printf("%lf", Newton_method(1, f));
+    second_differentiation(f);
+    //printf("%lf", Newton_method(1, f));
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
@@ -109,7 +110,6 @@ inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, dou
 
     x = fabs(x_n0 - x_n1);
     y = fabs(f_of_x);
-   
    
     if(x < h)       //The nicety between x_n1 and x_n0 is less than h.
         return 0;
