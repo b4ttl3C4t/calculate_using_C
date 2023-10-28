@@ -210,7 +210,8 @@ double second_symmetric_derivative(double x, double h, double f(double))
 
 double second_five_point_derivative(double x, double h, double f(double))
 {
-    return (first_five_point_derivative(x + h, h, f) - first_five_point_derivative(x, h, f)) / h;
+    return (first_five_point_derivative(x - 2*h, h, f) + 8 * first_five_point_derivative(x + h, h, f)
+            - 8 * first_five_point_derivative(x - h, h, f) - first_five_point_derivative(x + 2*h, h, f)) / (12 * h);
 }
 
 void recursive_differentiation(double f(double))
