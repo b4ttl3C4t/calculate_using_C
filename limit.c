@@ -36,7 +36,7 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return x*x*x - x - 1;
+    return pow((x*x + 9) / (9*x*x + 1), 0.5);
 }
 
 int main(void)
@@ -116,27 +116,20 @@ inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, dou
     else
         return 1;
     
-
-   /*
     if(y < h)       //The nicety of the absolute value of f(x) is less than h.
         return 0;
     else
         return 1;
-    */
 
-   /*
     if(x*y < h)     //The triangle area ((x*y)/2 ~= x*y) of x and y is less than h.
         return 0;
     else
         return 1;
-    */
-   
-   /*
+
     if(pow(y*y - x*x, 0.5) < h)     //The length of the secant (((y*y - x*x)^(1/2)) ~= (y*y - x*x)) is less than h.
         return 0;
     else
         return 1;
-    */
 }
 
 void first_differentiation(double f(double))
