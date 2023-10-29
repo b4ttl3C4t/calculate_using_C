@@ -106,7 +106,7 @@ double Newton_method(double initial_value, double f(double))
     return x_n1;
 }
 
-inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+static inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
 {
     static double x;
     static double y;
@@ -219,7 +219,7 @@ static inline unsigned long long int combination(unsigned int n, unsigned int m)
     {
         result = (result * (n - i + 1)) / i;
     }
-    //printf("\n|%lu: %lu: %llu|\n", n, m, result);
+    
     return result;
 }
 
