@@ -24,6 +24,7 @@ double second_right_derivative          (double, double, double (double));
 double second_symmetric_derivative      (double, double, double (double));
 double second_five_point_derivative     (double, double, double (double));
 
+void   iterative_differentiation        (double (double));
 void   recursive_differentiation        (double (double));
 double recursive_right_derivative       (unsigned int, double, double, double (double));
 double recursive_symmetric_derivative   (unsigned int, double, double, double (double));
@@ -36,14 +37,16 @@ double definite_integral_Simpson    (double, double, double (double));
 
 double f(double x)
 {
-    return pow((x*x + 9) / (9*x*x + 1), 0.5);
+    return (x*x*x*x);
 }
 
 int main(void)
 {begin = clock();
 
-    second_differentiation(f);
-    //printf("%lf", Newton_method(1, f));
+    iterative_differentiation(f);
+    /*
+    printf("%lf", iterative_differentiation(2, f));
+    */
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
@@ -154,17 +157,17 @@ void first_differentiation(double f(double))
         x, first_five_point_derivative(x, h, f));
 }
 
-double first_right_derivative(double x, double h, double f(double))
+inline double first_right_derivative(double x, double h, double f(double))
 {
     return (f(x + h) - f(x)) / h;
 }
 
-double first_symmetric_derivative(double x, double h, double f(double))
+inline double first_symmetric_derivative(double x, double h, double f(double))
 {
     return (f(x + h) - f(x - h)) / (2 * h);
 }
 
-double first_five_point_derivative(double x, double h, double f(double))
+inline double first_five_point_derivative(double x, double h, double f(double))
 {
     return (f(x - 2*h) + 8 * f(x + h) - 8 * f(x - h) - f(x + 2*h)) / (12 * h);
 }
@@ -191,26 +194,40 @@ void second_differentiation(double f(double))
         x, second_five_point_derivative(x, h, f));
 }
 
-double second_right_derivative(double x, double h, double f(double))
+inline double second_right_derivative(double x, double h, double f(double))
 {
     return (first_right_derivative(x + h, h, f) - first_right_derivative(x, h, f)) / h;
 }
 
-double second_symmetric_derivative(double x, double h, double f(double))
+inline double second_symmetric_derivative(double x, double h, double f(double))
 {
     return (first_symmetric_derivative(x + h, h, f) - first_symmetric_derivative(x - h, h, f)) / (2 * h);
 }
 
-double second_five_point_derivative(double x, double h, double f(double))
+inline double second_five_point_derivative(double x, double h, double f(double))
 {
     return (first_five_point_derivative(x - 2*h, h, f) + 8 * first_five_point_derivative(x + h, h, f)
             - 8 * first_five_point_derivative(x - h, h, f) - first_five_point_derivative(x + 2*h, h, f)) / (12 * h);
 }
 
-void recursive_differentiation(double f(double))
+static inline unsigned long long int combination(unsigned int n, unsigned int m)
 {
-    unsigned int i;
-    double x, h, n;
+    static unsigned long long int result;
+    
+    result = 1;
+    for(unsigned int i = 1; i <= m; ++i)
+    {
+        result = (result * (n - i + 1)) / i;
+    }
+    //printf("\n|%lu: %lu: %llu|\n", n, m, result);
+    return result;
+}
+
+void iterative_differentiation(double f(double))
+{
+    unsigned int i, n;
+    double x, h;
+    double result = 0;
 
     printf("\n%s", "> Enter the x :");
     scanf("%lf", &x);
@@ -221,19 +238,56 @@ void recursive_differentiation(double f(double))
     getchar();
     
     printf("\n%s", "> Enter the n :");
-    scanf("%lf", &n);
+    scanf("%u", &n);
     getchar();
 
-    for(i = 0; i <= n; ++i)
-        printf("recursive_right_derivative f_%u(x) \tapproach to %lf is %lf\n", 
-            i, x, recursive_right_derivative(i, x, h, f));
+    if(n == 0)
+    {
+        printf("iterative_differentiation f_%u(x) \tapproach to %lf is %lf\n", n, x, f(x));
+        return;
+    }
 
     for(i = 0; i <= n; ++i)
-        printf("recursive_symmetric_derivative f_%u(x) \tapproach to %lf is %lf\n", 
+    {
+        result += pow(-1, i) * combination(n, i) * f(x + (n-i)*h);
+    }
+    result /= pow(h, n);
+
+    printf("iterative_differentiation f_%u(x) \tapproach to %lf is %lf\n", n, x, result);
+    return;
+}
+
+//Be cautious about whether h is less than the precise limit.
+void recursive_differentiation(double f(double))
+{
+    unsigned int i, n;
+    double x, h;
+
+    printf("\n%s", "> Enter the x :");
+    scanf("%lf", &x);
+    getchar();
+
+    printf("\n%s", "> Enter the h :");
+    scanf("%lf", &h);
+    getchar();
+    
+    printf("\n%s", "> Enter the n :");
+    scanf("%u", &n);
+    getchar();
+
+    printf("%c", '\n');
+    for(i = 0; i <= n; ++i)
+        printf("recursive_right_derivative f_%-2u(x) \tapproach to %lf is %+lf\n", 
+            i, x, recursive_right_derivative(i, x, h, f));
+    
+    printf("%c", '\n');
+    for(i = 0; i <= n; ++i)
+        printf("recursive_symmetric_derivative f_%-2u(x) \tapproach to %lf is %+lf\n", 
             i, x, recursive_symmetric_derivative(i, x, h, f));
-            
+    
+    printf("%c", '\n');
     for(i = 0; i <= n; ++i) 
-        printf("recursive_five_point_derivative f_%u(x) \tapproach to %lf is %lf\n",
+        printf("recursive_five_point_derivative f_%-2u(x) \tapproach to %lf is %+lf\n",
             i, x, recursive_five_point_derivative(i, x, h, f));
 }
 
