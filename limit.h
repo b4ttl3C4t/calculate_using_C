@@ -4,7 +4,7 @@
 #include <time.h>
 
 void   limit_to_zero            (double (*)(double));
-double iter_bisect_method       (double);
+double iterative_bisect_method  (double);
 double Newton_method            (double, double (double));
 int    Newton_stopping_criteria (double, double, double, double);
 

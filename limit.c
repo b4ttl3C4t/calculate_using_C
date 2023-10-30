@@ -15,6 +15,7 @@ int main(void)
 {begin = clock();
 
     iterative_differentiation(f);
+    recursive_differentiation(f);
     /*
     printf("%lf", iterative_differentiation(2, f));
     */
@@ -37,7 +38,7 @@ void limit_to_zero(double (*function)(double))
     }
 }
 
-double iter_bisect_method(double target)
+double iterative_bisect_method(double target)
 {
     double lower  = LOWER;
     double upper  = UPPER;
@@ -77,7 +78,7 @@ double Newton_method(double initial_value, double f(double))
     return x_n1;
 }
 
-static inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
 {
     static double x;
     static double y;
