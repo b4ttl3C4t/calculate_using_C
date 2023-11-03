@@ -8,16 +8,16 @@ static clock_t begin, end;
 
 double f(double x)
 {
-    return (x*x*x*x);
+    return (x*x*x - 6*x*x + 8*x);
 }
 
-int main(void)
+int32_t main(void)
 {begin = clock();
 
-    iterative_differentiation(f);
-    /*
-    printf("%lf", iterative_differentiation(2, f));
-    */
+    //iterative_differentiation(f);
+    ///*
+    printf("%lf", f(3.155));
+    //*/
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
@@ -29,7 +29,7 @@ printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
  */
 void limit_to_zero(double (*function)(double))
 {
-    int i;
+    int32_t i;
 
     for(i = 0; i < 10; ++i)
     {
@@ -43,7 +43,7 @@ double iter_bisect_method(double target)
     double upper  = UPPER;
     double middle = (upper + lower) / 2;
     
-    unsigned int i;    
+    uint32_t i;    
     
     //Finding the by mean value theorm.
     for (i = 0; i < 100; ++i)
@@ -77,7 +77,7 @@ double Newton_method(double initial_value, double f(double))
     return x_n1;
 }
 
-static inline int Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
 {
     static double x;
     static double y;
@@ -181,12 +181,12 @@ inline double second_five_point_derivative(double x, double h, double f(double))
             - 8 * first_five_point_derivative(x - h, h, f) - first_five_point_derivative(x + 2*h, h, f)) / (12 * h);
 }
 
-static inline unsigned long long int combination(unsigned int n, unsigned int m)
+static inline uint64_t combination(uint32_t n, uint32_t m)
 {
-    static unsigned long long int result;
+    static uint64_t result;
     
     result = 1;
-    for(unsigned int i = 1; i <= m; ++i)
+    for(uint32_t i = 1; i <= m; ++i)
     {
         result = (result * (n - i + 1)) / i;
     }
@@ -196,7 +196,7 @@ static inline unsigned long long int combination(unsigned int n, unsigned int m)
 
 void iterative_differentiation(double f(double))
 {
-    unsigned int i, n;
+    uint32_t i, n;
     double x, h;
     double result = 0;
 
@@ -231,7 +231,7 @@ void iterative_differentiation(double f(double))
 //Be cautious about whether h is less than the precise limit.
 void recursive_differentiation(double f(double))
 {
-    unsigned int i, n;
+    uint32_t i, n;
     double x, h;
 
     printf("\n%s", "> Enter the x :");
@@ -262,7 +262,7 @@ void recursive_differentiation(double f(double))
             i, x, recursive_five_point_derivative(i, x, h, f));
 }
 
-double recursive_right_derivative(unsigned int n, double x, double h, double f(double))
+double recursive_right_derivative(uint8_t n, double x, double h, double f(double))
 {
     if(n == 0)
         return f(x);
@@ -272,7 +272,7 @@ double recursive_right_derivative(unsigned int n, double x, double h, double f(d
         return (recursive_right_derivative(n-1, x + h, h, f) - recursive_right_derivative(n-1, x, h, f)) / h;
 }
 
-double recursive_symmetric_derivative(unsigned int n, double x, double h, double f(double))
+double recursive_symmetric_derivative(uint8_t n, double x, double h, double f(double))
 {
     if(n == 0)
         return f(x);
@@ -282,7 +282,7 @@ double recursive_symmetric_derivative(unsigned int n, double x, double h, double
         return (recursive_symmetric_derivative(n-1, x + h, h, f) - recursive_symmetric_derivative(n-1, x - h, h, f)) / (2 * h);
 }
 
-double recursive_five_point_derivative(unsigned int n, double x, double h, double f(double))
+double recursive_five_point_derivative(uint8_t n, double x, double h, double f(double))
 {
     if(n == 0)
         return f(x);
@@ -327,7 +327,7 @@ double definite_integral_right(double lower, double upper, double partition, dou
     double summation = 0.0;
     double height    = 0.0;
     double width     = (upper - lower) / partition;
-    unsigned int i;
+    uint32_t i;
 
     for(i = 1; i <= partition; ++i)
     {
@@ -350,7 +350,7 @@ double definite_integral_trapezium(double lower, double upper, double partition,
     double summation = 0.0;
     double height    = 0.0;
     double width     = (upper - lower) / partition;
-    unsigned int i;
+    uint32_t i;
 
     summation += func(lower) / 2;
     for(i = 1; i < partition; ++i)
