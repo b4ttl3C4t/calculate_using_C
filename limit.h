@@ -1,13 +1,16 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <math.h>
 #include <time.h>
 
-void   limit_to_zero                (double (*)(double));
-double iter_bisect_method           (double);
-double Newton_method                (double, double (double));
-int8_t Newton_stopping_criteria     (double, double, double, double);
+void   limit_to_zero            (double (*)(double));
+double iter_bisect_method       (double);
+double Newton_method            (double, double (double));
+int8_t Newton_stopping_criteria (double, double, double, double);
+double Taylor_series            (uint8_t, double, double, double (double));
+double Lagrange_polynomial      (uint8_t, ...);
 
 void   first_differentiation            (double (double));
 double first_right_derivative           (double, double, double (double));

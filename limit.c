@@ -5,6 +5,9 @@
 #define H_APPROACH_0    0.000001
 
 static clock_t begin, end;
+static inline uint64_t factorial(uint32_t n);
+static inline uint64_t combination(uint32_t, uint32_t);
+static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
@@ -15,6 +18,7 @@ int32_t main(void)
 {begin = clock();
 
     //iterative_differentiation(f);
+    recursive_differentiation(f);
     ///*
     printf("%lf", f(3.155));
     //*/
@@ -37,7 +41,7 @@ void limit_to_zero(double (*function)(double))
     }
 }
 
-double iter_bisect_method(double target)
+double iterative_bisect_method(double target)
 {
     double lower  = LOWER;
     double upper  = UPPER;
@@ -77,7 +81,7 @@ double Newton_method(double initial_value, double f(double))
     return x_n1;
 }
 
-inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+static inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
 {
     static double x;
     static double y;
@@ -179,19 +183,6 @@ inline double second_five_point_derivative(double x, double h, double f(double))
 {
     return (first_five_point_derivative(x - 2*h, h, f) + 8 * first_five_point_derivative(x + h, h, f)
             - 8 * first_five_point_derivative(x - h, h, f) - first_five_point_derivative(x + 2*h, h, f)) / (12 * h);
-}
-
-static inline uint64_t combination(uint32_t n, uint32_t m)
-{
-    static uint64_t result;
-    
-    result = 1;
-    for(uint32_t i = 1; i <= m; ++i)
-    {
-        result = (result * (n - i + 1)) / i;
-    }
-
-    return result;
 }
 
 void iterative_differentiation(double f(double))
@@ -381,4 +372,53 @@ double definite_integral_Simpson(double lower, double upper, double func(double)
     summation *= (upper - lower) / 6;
 
     return summation;
+}
+
+
+
+
+
+//----------------------------Internal function--------------------------:
+static inline uint64_t factorial(uint32_t n)
+{
+    static uint64_t result, i;
+
+    if(n == 0 || n == 1)
+    {
+        return 1;
+    }
+
+    result = 1;
+    for(i = 2; i <= n; ++i)
+    {
+        result *= i;
+    }
+    return result;
+}
+
+
+static inline uint64_t permutation(uint32_t n, uint32_t m)
+{
+    static uint64_t result, i;
+    
+    result = 1;
+    for(i = 1; i <= m; ++i)
+    {
+        result *= n - i + 1;
+    }
+
+    return result;
+}
+
+static inline uint64_t combination(uint32_t n, uint32_t m)
+{
+    static uint64_t result, i;
+    
+    result = 1;
+    for(i = 1; i <= m; ++i)
+    {
+        result = (result * (n - i + 1)) / i;    //You should not write like "result *= (n - i + 1) / i;", or it will get wrong.
+    }
+
+    return result;
 }
