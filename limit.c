@@ -11,7 +11,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return (x*x*x - 6*x*x + 8*x);
+    return (x*x*x*x);
 }
 
 int32_t main(void)
@@ -19,7 +19,7 @@ int32_t main(void)
 
     //iterative_differentiation(f);
     recursive_differentiation(f);
-    ///*
+    /*
     printf("%lf", f(3.155));
     //*/
 
@@ -81,7 +81,7 @@ double Newton_method(double initial_value, double f(double))
     return x_n1;
 }
 
-static inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
 {
     static double x;
     static double y;
