@@ -11,7 +11,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return (x*x*x*x);
+    return sin(x);
 }
 
 int32_t main(void)
