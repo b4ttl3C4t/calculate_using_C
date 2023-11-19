@@ -17,7 +17,7 @@ double f(double x)
 int32_t main(void)
 {begin = clock();
 
-    //iterative_differentiation(f);
+    iterative_differentiation(f);
     recursive_differentiation(f);
     /*
     printf("%lf", f(3.155));
