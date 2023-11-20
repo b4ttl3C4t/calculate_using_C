@@ -11,14 +11,15 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return sin(x);
+    return pow(x, -0.5);
 }
 
 int32_t main(void)
 {begin = clock();
 
-    iterative_differentiation(f);
-    recursive_differentiation(f);
+    //iterative_differentiation(f);
+    //recursive_differentiation(f);
+    numerical_integration(f);
     /*
     printf("%lf", f(3.155));
     //*/
