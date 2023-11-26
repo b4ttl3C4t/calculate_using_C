@@ -11,7 +11,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return 1/x;
+    return 4 / pow(1-x*x, 0.5);
 }
 
 int32_t main(void)
@@ -20,9 +20,8 @@ int32_t main(void)
     //iterative_differentiation(f);
     //recursive_differentiation(f);
     numerical_integration(f);
-    /*
-    printf("%lf", f(3.155));
-    //*/
+    
+    //printf("%lf", f(0));
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
