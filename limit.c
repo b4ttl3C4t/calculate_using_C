@@ -11,7 +11,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return pow(x, -0.5);
+    return 1/x;
 }
 
 int32_t main(void)
@@ -287,30 +287,48 @@ double recursive_five_point_derivative(uint8_t n, double x, double h, double f(d
 
 void numerical_integration(double func(double))
 {
-    double lower, upper, partition;
+    uint32_t i, n;
+    double lower, upper;
 
     printf("\n%s", "> Enter the lower and upper :");
     scanf("%lf%lf", &lower, &upper);
     getchar();
 
-    printf("\n%s", "> Enter the partition :");
-    scanf("%lf", &partition);
+    printf("\n%s", "> Enter the partition (log10) :");
+    scanf("%u", &n);
     getchar();
 
-    if(partition < 1)
+    if(n < 1)
     {
         fprintf(stderr, "\n%s", "> The partition shouldn't be less than 1.");
         return ;
     }
 
-    printf("definite_integral_right with domain from %lf to %lf is %lf\n", 
-        lower, upper, definite_integral_right(lower, upper, partition, func));
+    if(n > 6)
+    {
+        fprintf(stderr, "\n%s", "> The partition is too fine to evaluate.");
+        return ;
+    }
 
-    printf("definite_integral_trapezium with domain from %lf to %lf is %lf\n", 
-        lower, upper, definite_integral_trapezium(lower, upper, partition, func));
+    printf("%c", '\n');
+    for(i = 1; i <= n; ++i)
+        printf("definite_integral_right\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
+            i ,lower, upper, definite_integral_right(lower, upper, pow(10, i), func));
     
-    printf("definite_integral_Simpson with domain from %lf to %lf is %lf\n", 
-        lower, upper, definite_integral_Simpson(lower, upper, func));
+    printf("%c", '\n');
+    for(i = 1; i <= n; ++i)
+        printf("definite_integral_midpoint\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
+            i ,lower, upper, definite_integral_midpoint(lower, upper, pow(10, i), func));
+
+    printf("%c", '\n');
+    for(i = 1; i <= n; ++i)
+        printf("definite_integral_trapezium\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
+            i ,lower, upper, definite_integral_trapezium(lower, upper, pow(10, i), func));
+    
+    printf("%c", '\n');
+    for(i = 1; i <= n; ++i)
+        printf("definite_integral_Simpson\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
+            i ,lower, upper, definite_integral_Simpson(lower, upper, func));
 }
 
 //Calculating definite integral by right side height.
@@ -327,6 +345,26 @@ double definite_integral_right(double lower, double upper, double partition, dou
          *by calculating the height multiple the width step by step.
          */
         height = func(lower + i * width);
+        summation += height;
+    }
+
+    //You can move out the multiplication of width by distributive property.
+    summation *= width;
+
+    return summation;
+}
+
+//Calculating definite integral by midpoint height.
+double definite_integral_midpoint(double lower, double upper, double partition, double func(double))
+{
+    double summation = 0.0;
+    double height    = 0.0;
+    double width     = (upper - lower) / partition;
+    uint32_t i;
+
+    for(i = 0; i <= partition - 1; ++i)
+    {
+        height = func(lower + ((2*i+1) * width) / 2.0);
         summation += height;
     }
 
