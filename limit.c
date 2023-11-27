@@ -11,7 +11,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return 4 / pow(1-x*x, 0.5);
+    return sin(x);
 }
 
 int32_t main(void)
@@ -284,7 +284,7 @@ double recursive_five_point_derivative(uint8_t n, double x, double h, double f(d
                 - 8 * recursive_five_point_derivative(n-1, x - h, h, f) - recursive_five_point_derivative(n-1, x + 2*h, h, f)) / (12 * h);
 }
 
-void numerical_integration(double func(double))
+void numerical_integration(double f(double))
 {
     uint32_t i, n;
     double lower, upper;
@@ -293,57 +293,62 @@ void numerical_integration(double func(double))
     scanf("%lf%lf", &lower, &upper);
     getchar();
 
-    printf("\n%s", "> Enter the partition (log10) :");
+    printf("\n%s", "> Enter the n (log10) :");
     scanf("%u", &n);
     getchar();
 
     if(n < 1)
     {
-        fprintf(stderr, "\n%s", "> The partition shouldn't be less than 1.");
+        fprintf(stderr, "\n%s", "> The n shouldn't be less than 1.");
         return ;
     }
 
     if(n > 6)
     {
-        fprintf(stderr, "\n%s", "> The partition is too fine to evaluate.");
+        fprintf(stderr, "\n%s", "> The n is too fine to evaluate.");
         return ;
     }
 
     printf("%c", '\n');
     for(i = 1; i <= n; ++i)
         printf("definite_integral_right\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
-            i ,lower, upper, definite_integral_right(lower, upper, pow(10, i), func));
+            i ,lower, upper, definite_integral_right(lower, upper, pow(10, i), f));
     
     printf("%c", '\n');
     for(i = 1; i <= n; ++i)
         printf("definite_integral_midpoint\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
-            i ,lower, upper, definite_integral_midpoint(lower, upper, pow(10, i), func));
+            i ,lower, upper, definite_integral_midpoint(lower, upper, pow(10, i), f));
 
     printf("%c", '\n');
     for(i = 1; i <= n; ++i)
         printf("definite_integral_trapezium\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
-            i ,lower, upper, definite_integral_trapezium(lower, upper, pow(10, i), func));
+            i ,lower, upper, definite_integral_trapezium(lower, upper, pow(10, i), f));
     
     printf("%c", '\n');
     for(i = 1; i <= n; ++i)
-        printf("definite_integral_Simpson\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
-            i ,lower, upper, definite_integral_Simpson(lower, upper, func));
+        printf("definite_integral_Simpson_1_3\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
+            i ,lower, upper, definite_integral_Simpson_1_3(lower, upper, pow(10, i), f));
+
+    printf("%c", '\n');
+    for(i = 1; i <= n; ++i)
+        printf("definite_integral_Simpson_3_8\t(parition 10^%u) with domain from %lf to %lf is %lf\n", 
+            i ,lower, upper, definite_integral_Simpson_3_8(lower, upper, pow(10, i), f));
 }
 
 //Calculating definite integral by right side height.
-double definite_integral_right(double lower, double upper, double partition, double func(double))
+double definite_integral_right(double lower, double upper, double n, double f(double))
 {
     double summation = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / partition;
+    double width     = (upper - lower) / n;
     uint32_t i;
 
-    for(i = 1; i <= partition; ++i)
+    for(i = 1; i <= n; ++i)
     {
-        /*Obtaining the approximate summation of func (integral from lower to upper)
+        /*Obtaining the approximate summation of f (integral from lower to upper)
          *by calculating the height multiple the width step by step.
          */
-        height = func(lower + i * width);
+        height = f(lower + i * width);
         summation += height;
     }
 
@@ -354,16 +359,16 @@ double definite_integral_right(double lower, double upper, double partition, dou
 }
 
 //Calculating definite integral by midpoint height.
-double definite_integral_midpoint(double lower, double upper, double partition, double func(double))
+double definite_integral_midpoint(double lower, double upper, double n, double f(double))
 {
     double summation = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / partition;
+    double width     = (upper - lower) / n;
     uint32_t i;
 
-    for(i = 0; i <= partition - 1; ++i)
+    for(i = 0; i <= n - 1; ++i)
     {
-        height = func(lower + ((2*i+1) * width) / 2.0);
+        height = f(lower + ((2*i+1) * width) / 2.0);
         summation += height;
     }
 
@@ -374,20 +379,21 @@ double definite_integral_midpoint(double lower, double upper, double partition, 
 }
 
 //Calculating definite integral by trapezium.
-double definite_integral_trapezium(double lower, double upper, double partition, double func(double))
+double definite_integral_trapezium(double lower, double upper, double n, double f(double))
 {
     double summation = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / partition;
+    double width     = (upper - lower) / n;
     uint32_t i;
 
-    summation += func(lower) / 2;
-    for(i = 1; i < partition; ++i)
+    summation += f(lower) / 2;
+    summation += f(upper) / 2;
+    
+    for(i = 1; i < n; ++i)
     {
-        height = func(lower + i * width);
+        height = f(lower + i * width);
         summation += height;
     }
-    summation += func(upper) / 2;
 
     //You can move out the multiplication of width by distributive property.
     summation *= width;
@@ -398,23 +404,75 @@ double definite_integral_trapezium(double lower, double upper, double partition,
 /*Calculating definite integral by curse,
  *and you don't have to get the summation by split and input the partiton.
  */
-double definite_integral_Simpson(double lower, double upper, double func(double))
+double definite_integral_Simpson_1_3(double lower, double upper, double n, double f(double))
 {
-    double summation = 0.0;
-
-    summation += func(lower);
-    summation += 4 * func((lower + upper) / 2);
-    summation += func(upper);
+    double summation = 0.0, sum = 0.0;
+    double height    = 0.0;
+    double width     = (upper - lower) / n;
+    uint32_t i;
+    
+    summation += f(lower);
+    for(i = 1; i < n/2; ++i)
+    {
+        height = f(lower + (2*i-1) * width);
+        sum += height;
+    }
+    sum *= 4;
+    summation += sum;
+    sum = 0;
+    
+    for(i = 1; i < n/2 - 1; ++i)
+    {
+        height = f(lower + (2*i) * width);
+        sum += height;
+    }
+    sum *= 2;
+    summation += sum;
+    summation += f(upper);
 
     //You can move out the multiplication of width by distributive property.
-    summation *= (upper - lower) / 6;
+    summation *= width / 3;
+    //Simpson's *1/3* rule.
 
     return summation;
 }
 
+/*Calculating definite integral by curse,
+ *and you don't have to get the summation by split and input the partiton.
+ */
+double definite_integral_Simpson_3_8(double lower, double upper, double n, double f(double))
+{
+    double summation = 0.0, sum = 0.0;
+    double height    = 0.0;
+    double width     = (upper - lower) / n;
+    uint32_t i;
+    
+    summation += f(lower);
+    for(i = 1; i < n-1; ++i)
+    {
+        if(i % 3 == 0) continue;
+        height = f(lower + i * width);
+        sum += height;
+    }
+    sum *= 3;
+    summation += sum;
+    sum = 0.0;
 
+    for(i = 1; i < n/3 - 1; ++i)
+    {
+        height = f(lower + (3*i) * width);
+        sum += height;
+    }
+    sum *= 2;
+    summation += sum;
+    summation += f(upper);
 
+    //You can move out the multiplication of width by distributive property.
+    summation *= width * 3 / 8;
+    //Simpson's *3/8* rule.
 
+    return summation;
+}
 
 //----------------------------Internal function--------------------------:
 static inline uint64_t factorial(uint32_t n)

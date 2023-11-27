@@ -28,8 +28,9 @@ double recursive_right_derivative       (uint8_t, double, double, double (double
 double recursive_symmetric_derivative   (uint8_t, double, double, double (double));
 double recursive_five_point_derivative  (uint8_t, double, double, double (double));
 
-void   numerical_integration        (double (double));
-double definite_integral_right      (double, double, double, double (double));
-double definite_integral_midpoint   (double, double, double, double (double));
-double definite_integral_trapezium  (double, double, double, double (double));
-double definite_integral_Simpson    (double, double, double (double));
+void   numerical_integration            (double (double));
+double definite_integral_right          (double, double, double, double (double));
+double definite_integral_midpoint       (double, double, double, double (double));
+double definite_integral_trapezium      (double, double, double, double (double));
+double definite_integral_Simpson_1_3    (double, double, double, double (double));
+double definite_integral_Simpson_3_8    (double, double, double, double (double));
