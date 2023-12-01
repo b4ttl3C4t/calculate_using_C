@@ -35,10 +35,5 @@ double definite_integral_trapezium      (double, double, uint64_t, double (doubl
 double definite_integral_Simpson_1_3    (double, double, uint64_t, double (double));
 double definite_integral_Simpson_3_8    (double, double, uint64_t, double (double));
 
-void   volume_integration               (double (double));
-double triangle_integration             (double, double, uint64_t, double (double));
-double rectangle_integration            (double, double, uint64_t, double (double));
-double disc_integration                 (double, double, uint64_t, double (double));
-double shell_integration                (double, double, uint64_t, double (double));
-
+//There are no integration for volume until the data structure of polynomial has constructed.
 double curve_length_integration         (double, double, uint64_t, double (double));

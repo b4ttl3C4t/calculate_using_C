@@ -476,35 +476,6 @@ double definite_integral_Simpson_3_8(double lower, double upper, uint64_t n, dou
     return summation;
 }
 
-void volume_integration(double f(double))
-{
-
-}
-
-double triangle_integration(double lower, double upper, uint64_t n, double f(double))
-{
-
-}
-
-double rectangle_integration(double lower, double upper, uint64_t n, double f(double))
-{
-
-}
-
-double disc_integration(double lower, double upper, uint64_t n, double f(double))
-{
-    
-}
-
-double shell_integration(double lower, double upper, uint64_t n, double f(double))
-{
-    double summation = 0.0;
-    double dx = (upper - lower) / n;
-    uint32_t i;
-
-
-}
-
 double curve_length_integration(double lower, double upper, uint64_t n, double f(double))
 {
     double summation = 0.0;
