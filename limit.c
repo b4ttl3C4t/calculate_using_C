@@ -2,6 +2,8 @@
 
 #define LOWER           -10000000000000
 #define UPPER           10000000000000
+#define X_AXIS          0
+#define Y_AXIS          1
 #define H_APPROACH_0    0.000001
 
 static clock_t begin, end;
@@ -11,7 +13,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return sin(x);
+    return 4*1.41421 / 3 * pow(x, 1.5) - 1;
 }
 
 int32_t main(void)
@@ -19,7 +21,7 @@ int32_t main(void)
 
     //iterative_differentiation(f);
     //recursive_differentiation(f);
-    numerical_integration(f);
+    printf("%lf", curve_length_integration(0, 1, 100000, f));
     
     //printf("%lf", f(0));
 
@@ -336,54 +338,54 @@ void numerical_integration(double f(double))
 }
 
 //Calculating definite integral by right side height.
-double definite_integral_right(double lower, double upper, double n, double f(double))
+double definite_integral_right(double lower, double upper, uint64_t n, double f(double))
 {
     double summation = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / n;
+    double dx = (upper - lower) / n;
     uint32_t i;
 
     for(i = 1; i <= n; ++i)
     {
         /*Obtaining the approximate summation of f (integral from lower to upper)
-         *by calculating the height multiple the width step by step.
+         *by calculating the height multiple the dx step by step.
          */
-        height = f(lower + i * width);
+        height = f(lower + i * dx);
         summation += height;
     }
 
-    //You can move out the multiplication of width by distributive property.
-    summation *= width;
+    //You can move out the multiplication of dx by distributive property.
+    summation *= dx;
 
     return summation;
 }
 
 //Calculating definite integral by midpoint height.
-double definite_integral_midpoint(double lower, double upper, double n, double f(double))
+double definite_integral_midpoint(double lower, double upper, uint64_t n, double f(double))
 {
     double summation = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / n;
+    double dx = (upper - lower) / n;
     uint32_t i;
 
     for(i = 0; i <= n - 1; ++i)
     {
-        height = f(lower + ((2*i+1) * width) / 2.0);
+        height = f(lower + ((2*i+1) * dx) / 2.0);
         summation += height;
     }
 
-    //You can move out the multiplication of width by distributive property.
-    summation *= width;
+    //You can move out the multiplication of dx by distributive property.
+    summation *= dx;
 
     return summation;
 }
 
 //Calculating definite integral by trapezium.
-double definite_integral_trapezium(double lower, double upper, double n, double f(double))
+double definite_integral_trapezium(double lower, double upper, uint64_t n, double f(double))
 {
     double summation = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / n;
+    double dx = (upper - lower) / n;
     uint32_t i;
 
     summation += f(lower) / 2;
@@ -391,12 +393,12 @@ double definite_integral_trapezium(double lower, double upper, double n, double 
     
     for(i = 1; i < n; ++i)
     {
-        height = f(lower + i * width);
+        height = f(lower + i * dx);
         summation += height;
     }
 
-    //You can move out the multiplication of width by distributive property.
-    summation *= width;
+    //You can move out the multiplication of dx by distributive property.
+    summation *= dx;
 
     return summation;
 }
@@ -404,17 +406,17 @@ double definite_integral_trapezium(double lower, double upper, double n, double 
 /*Calculating definite integral by curse,
  *and you don't have to get the summation by split and input the partiton.
  */
-double definite_integral_Simpson_1_3(double lower, double upper, double n, double f(double))
+double definite_integral_Simpson_1_3(double lower, double upper, uint64_t n, double f(double))
 {
     double summation = 0.0, sum = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / n;
+    double dx = (upper - lower) / n;
     uint32_t i;
     
     summation += f(lower);
     for(i = 1; i < n/2; ++i)
     {
-        height = f(lower + (2*i-1) * width);
+        height = f(lower + (2*i-1) * dx);
         sum += height;
     }
     sum *= 4;
@@ -423,15 +425,15 @@ double definite_integral_Simpson_1_3(double lower, double upper, double n, doubl
     
     for(i = 1; i < n/2 - 1; ++i)
     {
-        height = f(lower + (2*i) * width);
+        height = f(lower + (2*i) * dx);
         sum += height;
     }
     sum *= 2;
     summation += sum;
     summation += f(upper);
 
-    //You can move out the multiplication of width by distributive property.
-    summation *= width / 3;
+    //You can move out the multiplication of dx by distributive property.
+    summation *= dx / 3;
     //Simpson's *1/3* rule.
 
     return summation;
@@ -440,18 +442,18 @@ double definite_integral_Simpson_1_3(double lower, double upper, double n, doubl
 /*Calculating definite integral by curse,
  *and you don't have to get the summation by split and input the partiton.
  */
-double definite_integral_Simpson_3_8(double lower, double upper, double n, double f(double))
+double definite_integral_Simpson_3_8(double lower, double upper, uint64_t n, double f(double))
 {
     double summation = 0.0, sum = 0.0;
     double height    = 0.0;
-    double width     = (upper - lower) / n;
+    double dx = (upper - lower) / n;
     uint32_t i;
     
     summation += f(lower);
     for(i = 1; i < n-1; ++i)
     {
         if(i % 3 == 0) continue;
-        height = f(lower + i * width);
+        height = f(lower + i * dx);
         sum += height;
     }
     sum *= 3;
@@ -460,16 +462,62 @@ double definite_integral_Simpson_3_8(double lower, double upper, double n, doubl
 
     for(i = 1; i < n/3 - 1; ++i)
     {
-        height = f(lower + (3*i) * width);
+        height = f(lower + (3*i) * dx);
         sum += height;
     }
     sum *= 2;
     summation += sum;
     summation += f(upper);
 
-    //You can move out the multiplication of width by distributive property.
-    summation *= width * 3 / 8;
+    //You can move out the multiplication of dx by distributive property.
+    summation *= dx * 3 / 8;
     //Simpson's *3/8* rule.
+
+    return summation;
+}
+
+void volume_integration(double f(double))
+{
+
+}
+
+double triangle_integration(double lower, double upper, uint64_t n, double f(double))
+{
+
+}
+
+double rectangle_integration(double lower, double upper, uint64_t n, double f(double))
+{
+
+}
+
+double disc_integration(double lower, double upper, uint64_t n, double f(double))
+{
+    
+}
+
+double shell_integration(double lower, double upper, uint64_t n, double f(double))
+{
+    double summation = 0.0;
+    double dx = (upper - lower) / n;
+    uint32_t i;
+
+
+}
+
+double curve_length_integration(double lower, double upper, uint64_t n, double f(double))
+{
+    double summation = 0.0;
+    double dy = 0.0;
+    double dx = (upper - lower) / n;
+    uint32_t i;
+
+    for(i = 1; i <= n; ++i)
+    {
+        dy = first_symmetric_derivative(lower + i*dx, H_APPROACH_0, f);
+        summation += pow(1 + dy*dy, 0.5);
+    }
+    summation *= dx;
 
     return summation;
 }

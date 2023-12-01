@@ -29,8 +29,16 @@ double recursive_symmetric_derivative   (uint8_t, double, double, double (double
 double recursive_five_point_derivative  (uint8_t, double, double, double (double));
 
 void   numerical_integration            (double (double));
-double definite_integral_right          (double, double, double, double (double));
-double definite_integral_midpoint       (double, double, double, double (double));
-double definite_integral_trapezium      (double, double, double, double (double));
-double definite_integral_Simpson_1_3    (double, double, double, double (double));
-double definite_integral_Simpson_3_8    (double, double, double, double (double));
+double definite_integral_right          (double, double, uint64_t, double (double));
+double definite_integral_midpoint       (double, double, uint64_t, double (double));
+double definite_integral_trapezium      (double, double, uint64_t, double (double));
+double definite_integral_Simpson_1_3    (double, double, uint64_t, double (double));
+double definite_integral_Simpson_3_8    (double, double, uint64_t, double (double));
+
+void   volume_integration               (double (double));
+double triangle_integration             (double, double, uint64_t, double (double));
+double rectangle_integration            (double, double, uint64_t, double (double));
+double disc_integration                 (double, double, uint64_t, double (double));
+double shell_integration                (double, double, uint64_t, double (double));
+
+double curve_length_integration         (double, double, uint64_t, double (double));
