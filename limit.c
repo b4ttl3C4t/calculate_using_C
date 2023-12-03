@@ -13,7 +13,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return 4*1.41421 / 3 * pow(x, 1.5) - 1;
+    return fabs(x);
 }
 
 int32_t main(void)
@@ -21,8 +21,7 @@ int32_t main(void)
 
     //iterative_differentiation(f);
     //recursive_differentiation(f);
-    printf("%lf", curve_length_integration(0, 1, 100000, f));
-    
+    numerical_integration(f);
     //printf("%lf", f(0));
 
 end = clock();
