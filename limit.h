@@ -37,3 +37,4 @@ double definite_integral_Simpson_3_8    (double, double, uint64_t, double (doubl
 
 //There are no integration for volume until the data structure of polynomial has constructed.
 double curve_length_integration         (double, double, uint64_t, double (double));
+double curve_surface_integration        (double, double, uint64_t, double (double));

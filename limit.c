@@ -5,6 +5,7 @@
 #define X_AXIS          0
 #define Y_AXIS          1
 #define H_APPROACH_0    0.000001
+#define PI              3.1415926
 
 static clock_t begin, end;
 static inline uint64_t factorial(uint32_t n);
@@ -13,7 +14,7 @@ static inline uint64_t permutation(uint32_t, uint32_t);
 
 double f(double x)
 {
-    return fabs(x);
+    return 2 * pow(x, 0.5);
 }
 
 int32_t main(void)
@@ -21,8 +22,9 @@ int32_t main(void)
 
     //iterative_differentiation(f);
     //recursive_differentiation(f);
-    numerical_integration(f);
-    //printf("%lf", f(0));
+    //numerical_integration(f);
+    
+    printf("%lf", curve_surface_integration(1, 2, 100000, f));
 
 end = clock();
 printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
@@ -32,13 +34,13 @@ printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
  *to find the approximation of the given root
  *base on the mean value therom.
  */
-void limit_to_zero(double (*function)(double))
+void limit_to_zero(double (*f)(double))
 {
     int32_t i;
 
     for(i = 0; i < 10; ++i)
     {
-        printf("%lf \n", function(pow(10, -i)));
+        printf("%lf \n", f(pow(10, -i)));
     }
 }
 
@@ -488,6 +490,23 @@ double curve_length_integration(double lower, double upper, uint64_t n, double f
         summation += pow(1 + dy*dy, 0.5);
     }
     summation *= dx;
+
+    return summation;
+}
+
+double curve_surface_integration(double lower, double upper, uint64_t n, double f(double))
+{
+    double summation = 0.0;
+    double dy = 0.0;
+    double dx = (upper - lower) / n;
+    uint32_t i;
+
+    for(i = 1; i <= n; ++i)
+    {
+        dy = first_symmetric_derivative(lower + i*dx, H_APPROACH_0, f);
+        summation += f(lower + i*dx) * pow(1 + dy*dy, 0.5);
+    }
+    summation *= dx * 2 * PI;
 
     return summation;
 }
