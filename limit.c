@@ -13,7 +13,7 @@ static inline uint64_t factorial(uint32_t n);
 static inline uint64_t combination(uint32_t, uint32_t);
 static inline uint64_t permutation(uint32_t, uint32_t);
 static inline int8_t   Newton_stopping_criteria(double, double, double, double);
-
+/*
 double f(double x)
 {
     return 2 * pow(x, 0.5);
@@ -26,12 +26,12 @@ int32_t main(void)
     //iterative_differentiation(f);
     //recursive_differentiation(f);
     //numerical_integration(f);
-    
+
     printf("%lf", curve_surface_integration(1, 2, 100000, f));
 
     end = clock();
     printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
-}
+}*/
 
 /*The iterative version of bisection method
  *to find the approximation of the given root

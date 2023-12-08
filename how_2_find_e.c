@@ -1,4 +1,4 @@
-#include "limit.h"
+#include "limit.c"
 
 #define OBSERVE_TIME 1
 
@@ -19,7 +19,8 @@ double f(double x)
 
 int main(void)
 {
-    definite_integral_right(1.0, 5.0, 10000, f);
+    printf("%lf", 1.01);
+    //by_Riemann_sum();
     //by_compound_interest();
     //by_Taylor_expansion();
 }
@@ -33,7 +34,7 @@ void by_Riemann_sum(void)
     begin = clock();
     while(1)
     {
-        if(definite_integral_right(1.0, x, 10000, f) - 1.0 < H_APPROACH_0)
+        if(fabs(definite_integral_right(1.0, x, 10000, f) - 1.0) < H_APPROACH_0)
         {
             break;
         }
@@ -53,7 +54,7 @@ void by_Riemann_sum(void)
     begin = clock();
     while(1)
     {
-        if(definite_integral_midpoint(1.0, x, 10000, f) - 1.0 < H_APPROACH_0)
+        if(fabs(definite_integral_midpoint(1.0, x, 10000, f) - 1.0) < H_APPROACH_0)
         {
             break;
         }
@@ -73,7 +74,7 @@ void by_Riemann_sum(void)
     begin = clock();
     while(1)
     {
-        if(definite_integral_trapezium(1.0, x, 10000, f) - 1.0 < H_APPROACH_0)
+        if(fabs(definite_integral_trapezium(1.0, x, 10000, f) - 1.0) < H_APPROACH_0)
         {
             break;
         }
@@ -93,7 +94,7 @@ void by_Riemann_sum(void)
     begin = clock();
     while(1)
     {
-        if(definite_integral_Simpson_1_3(1.0, x, 10000, f) - 1.0 < H_APPROACH_0)
+        if(fabs(definite_integral_Simpson_1_3(1.0, x, 10000, f) - 1.0) < H_APPROACH_0)
         {
             break;
         }
@@ -113,7 +114,7 @@ void by_Riemann_sum(void)
     begin = clock();
     while(1)
     {
-        if(definite_integral_Simpson_3_8(1.0, x, 10000, f) - 1.0 < H_APPROACH_0)
+        if(fabs(definite_integral_Simpson_3_8(1.0, x, 10000, f) - 1.0) < H_APPROACH_0)
         {
             break;
         }
