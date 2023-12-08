@@ -14,13 +14,12 @@ void by_Taylor_expansion(void);
 
 double f(double x)
 {
-    return (x != 0)||(1/x);
+    return (1/x);
 }
 
 int main(void)
 {
-    printf("%lf", 1.01);
-    //by_Riemann_sum();
+    by_Riemann_sum();
     //by_compound_interest();
     //by_Taylor_expansion();
 }
@@ -28,13 +27,29 @@ int main(void)
 void by_Riemann_sum(void)
 {
     register double x;
+    register uint64_t foo = 0;
+
+	if(fabs(definite_integral_right(1.0, E, 100000, f) - 1.0) < H_APPROACH_0)
+    {
+    	printf("aasdf");
+    	return ;
+	}
+	printf("%lf %lf\n", fabs(definite_integral_right(1.0, E, 364599, f) - 1.0), H_APPROACH_0);
+    return;
+
+    int i = 1;
+    for(; fabs(definite_integral_right(1.0, E, i, f) - 1.0) > H_APPROACH_0; ++i)
+    {
+    	printf("%d %lf\n", i, fabs(definite_integral_right(1.0, E, i, f) - 1.0));
+	}
+    return;
     
     //By definite_integral_right.
     x = 1.0;
     begin = clock();
     while(1)
     {
-        if(fabs(definite_integral_right(1.0, x, 10000, f) - 1.0) < H_APPROACH_0)
+        if(fabs(definite_integral_right(1.0, E, 100000, f) - 1.0) < H_APPROACH_0)
         {
             break;
         }
