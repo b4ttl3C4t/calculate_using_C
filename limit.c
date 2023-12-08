@@ -6,6 +6,7 @@
 #define Y_AXIS          1
 #define H_APPROACH_0    0.000001
 #define PI              3.1415926
+#define E               2.7182818
 
 static clock_t begin, end;
 static inline uint64_t factorial(uint32_t n);
@@ -18,7 +19,8 @@ double f(double x)
 }
 
 int32_t main(void)
-{begin = clock();
+{
+    begin = clock();
 
     //iterative_differentiation(f);
     //recursive_differentiation(f);
@@ -26,8 +28,8 @@ int32_t main(void)
     
     printf("%lf", curve_surface_integration(1, 2, 100000, f));
 
-end = clock();
-printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
+    end = clock();
+    printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
 }
 
 /*The iterative version of bisection method
@@ -84,7 +86,7 @@ double Newton_method(double initial_value, double f(double))
     return x_n1;
 }
 
-inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
+static inline int8_t Newton_stopping_criteria(double x_n1, double x_n0, double f_of_x, double h)
 {
     static double x;
     static double y;
