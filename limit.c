@@ -9,11 +9,11 @@
 #define E               2.7182818
 
 static clock_t begin, end;
-static inline uint64_t factorial(uint32_t n);
-static inline uint64_t combination(uint32_t, uint32_t);
-static inline uint64_t permutation(uint32_t, uint32_t);
-static inline int8_t   Newton_stopping_criteria(double, double, double, double);
-/*
+inline static uint64_t factorial(uint32_t n);
+inline static uint64_t combination(uint32_t, uint32_t);
+inline static uint64_t permutation(uint32_t, uint32_t);
+inline static int8_t   Newton_stopping_criteria(double, double, double, double);
+
 double f(double x)
 {
     return 2 * pow(x, 0.5);
@@ -31,7 +31,7 @@ int32_t main(void)
 
     end = clock();
     printf("\n|%lf|\n", (double)(end - begin) / CLOCKS_PER_SEC);
-}*/
+}
 
 /*The iterative version of bisection method
  *to find the approximation of the given root
@@ -138,17 +138,17 @@ void first_differentiation(double f(double))
         x, first_five_point_derivative(x, h, f));
 }
 
-inline double first_right_derivative(double x, double h, double f(double))
+double first_right_derivative(double x, double h, double f(double))
 {
     return (f(x + h) - f(x)) / h;
 }
 
-inline double first_symmetric_derivative(double x, double h, double f(double))
+double first_symmetric_derivative(double x, double h, double f(double))
 {
     return (f(x + h) - f(x - h)) / (2 * h);
 }
 
-inline double first_five_point_derivative(double x, double h, double f(double))
+double first_five_point_derivative(double x, double h, double f(double))
 {
     return (f(x - 2*h) + 8 * f(x + h) - 8 * f(x - h) - f(x + 2*h)) / (12 * h);
 }
@@ -515,7 +515,7 @@ double curve_surface_integration(double lower, double upper, uint64_t n, double 
 }
 
 //----------------------------Internal function--------------------------:
-static inline uint64_t factorial(uint32_t n)
+static uint64_t factorial(uint32_t n)
 {
     static uint64_t result, i;
 
@@ -533,7 +533,7 @@ static inline uint64_t factorial(uint32_t n)
 }
 
 
-static inline uint64_t permutation(uint32_t n, uint32_t m)
+static uint64_t permutation(uint32_t n, uint32_t m)
 {
     static uint64_t result, i;
     
@@ -546,7 +546,7 @@ static inline uint64_t permutation(uint32_t n, uint32_t m)
     return result;
 }
 
-static inline uint64_t combination(uint32_t n, uint32_t m)
+static uint64_t combination(uint32_t n, uint32_t m)
 {
     static uint64_t result, i;
     
