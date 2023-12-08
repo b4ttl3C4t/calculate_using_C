@@ -11,7 +11,6 @@
 void   limit_to_zero            (double (*)(double));
 double iter_bisect_method       (double);
 double Newton_method            (double, double (double));
-int8_t Newton_stopping_criteria (double, double, double, double);
 double Taylor_series            (uint8_t, double, double, double (double));
 double Lagrange_polynomial      (uint8_t, ...);
 

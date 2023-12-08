@@ -19,7 +19,7 @@ double f(double x)
 
 int main(void)
 {
-    by_Riemann_sum();
+    definite_integral_right(1.0, 5.0, 10000, f);
     //by_compound_interest();
     //by_Taylor_expansion();
 }
@@ -127,7 +127,6 @@ void by_Riemann_sum(void)
 #else
     printf("by_Riemann_sum::definite_integral_Simpson_3_8: |%llu|\n", (uintmax_t)CLOCK_DIFF);
 #endif
-
 }
 
 void by_compound_interest(void)

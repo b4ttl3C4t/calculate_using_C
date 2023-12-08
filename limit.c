@@ -12,6 +12,7 @@ static clock_t begin, end;
 static inline uint64_t factorial(uint32_t n);
 static inline uint64_t combination(uint32_t, uint32_t);
 static inline uint64_t permutation(uint32_t, uint32_t);
+static inline int8_t   Newton_stopping_criteria(double, double, double, double);
 
 double f(double x)
 {
