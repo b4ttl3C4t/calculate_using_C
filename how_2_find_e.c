@@ -23,6 +23,8 @@ inline static uint64_t factorial(uint32_t n);
 inline static double definite_integral_right          (double, double, uint64_t, double (double));
 inline static double definite_integral_midpoint       (double, double, uint64_t, double (double));
 inline static double definite_integral_trapezium      (double, double, uint64_t, double (double));
+inline static double definite_integral_proportion     (double, double, uint64_t, double (double));
+inline static double first_symmetric_derivative 	  (double, double, double (double));
 
 double f(double x)
 {
@@ -31,7 +33,7 @@ double f(double x)
 
 int main(void)
 {
-	//printf("%lf", 1.0 - definite_integral_right(1.0, E, 1000000, f));	return;
+	//printf("%lf\n", first_symmetric_derivative(foo, H_APPROACH_0, f));	return;
     by_Taylor_expansion();
     by_compound_interest();
 	binary_by_Riemann_sum();
@@ -105,16 +107,16 @@ void binary_by_Riemann_sum(void)
 	//By trapezium.
 	begin = clock();
 	lower = 1.0;
-	upper = DBL_MAX;
+	upper = 10000000001000000000.0;
     while(1)
     {
         mid  = (lower + upper) / 2;
-		temp = definite_integral_trapezium(1.0, mid, 870, f);
-        if(fabs(temp - 1.0) < H_APPROACH_0)
+		temp = definite_integral_proportion(1.0, mid, 1000000000, f);
+        if(fabs(temp - 1.0) < 0.0000000001)
         {
         	break;
 		}
-		
+		//printf("|%lf %lf|\n", temp, mid);
 		if(temp < 1.0)
 			lower = mid;
 		else
@@ -307,6 +309,17 @@ static double definite_integral_trapezium(double lower, double upper, uint64_t n
     summation *= dx;
 
     return summation;
+}
+
+static double first_symmetric_derivative(double x, double h, double f(double))
+{
+    return (f(x + h) - f(x - h)) / (2 * h);
+}
+
+static double definite_integral_proportion(double lower, double upper, uint64_t n, double f(double))
+{
+	return first_symmetric_derivative(exp10(log10(upper / lower) * (1.0 / n)) - 1, H_APPROACH_0, f) /
+		   first_symmetric_derivative(1.0 / n, H_APPROACH_0, f);
 }
 
 static inline uint64_t factorial(uint32_t n)
