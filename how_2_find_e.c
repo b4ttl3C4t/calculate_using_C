@@ -222,7 +222,7 @@ void by_compound_interest(void)
 	n = 2000000;
 	while(n != 0)
 	{
-		if((n & 1) != 0)
+		if(n & 1)
 		{
 			product *= term;
 		}
