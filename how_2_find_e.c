@@ -104,7 +104,7 @@ void binary_by_Riemann_sum(void)
 {
 	register double temp, mid, lower, upper;
 	
-	//By trapezium.
+	//By table-search method.
 	begin = clock();
 	lower = 1.0;
 	upper = 10000000001000000000.0;
@@ -113,6 +113,30 @@ void binary_by_Riemann_sum(void)
         mid  = (lower + upper) / 2;
 		temp = definite_integral_proportion(1.0, mid, 1000000000, f);
         if(fabs(temp - 1.0) < 0.0000000001)
+        {
+        	break;
+		}
+		//printf("|%lf %lf|\n", temp, mid);
+		if(temp < 1.0)
+			lower = mid;
+		else
+			upper = mid;
+    }
+	end = clock();
+    printf("binary_by_Riemann_sum::table:\t\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
+			mid,
+			TIME_DIFF, 
+			(uintmax_t)CLOCK_DIFF);
+	
+	//By trapezium.
+	begin = clock();
+	lower = 1.0;
+	upper = DBL_MAX;
+    while(1)
+    {
+        mid  = (lower + upper) / 2;
+		temp = definite_integral_trapezium(1.0, mid, 870, f);
+        if(fabs(temp - 1.0) < H_APPROACH_0)
         {
         	break;
 		}
@@ -180,8 +204,38 @@ void binary_by_Riemann_sum(void)
 void by_compound_interest(void)
 {
 	register double term, product;
-	register uint64_t i;
+	register uint64_t i, n;
 	
+	//By log10() and exp10() (table-search method).
+	begin = clock();
+	product = exp(log(1 + 1.0 / 2000000) * 2000000);
+	end = clock();
+    printf("by_compound_interest::table:\t\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
+			product,
+			TIME_DIFF, 
+			(uintmax_t)CLOCK_DIFF);
+	
+	//By bit-by-bit method.
+	begin = clock();
+	product = 1.0;
+	term = 1 + 1.0 / 2000000;
+	n = 2000000;
+	while(n != 0)
+	{
+		if((n & 1) != 0)
+		{
+			product *= term;
+		}
+		term *= term;
+		n >>= 1;
+	}
+	end = clock();
+    printf("by_compound_interest::bit-by-bit:\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
+			product,
+			TIME_DIFF, 
+			(uintmax_t)CLOCK_DIFF);
+	
+	//By iterative method.
 	begin = clock();
 	product = 1.0;
 	term = 1 + 1.0 / 2000000;
@@ -190,7 +244,7 @@ void by_compound_interest(void)
     	product *= term;
 	}
 	end = clock();
-    printf("by_compound_interest:\t\t\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
+    printf("by_compound_interest::iterative:\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
 			product,
 			TIME_DIFF, 
 			(uintmax_t)CLOCK_DIFF);
@@ -198,7 +252,7 @@ void by_compound_interest(void)
 
 void by_Taylor_expansion(void)
 {
-	register double term, sum, k;
+	register double term, sum;
 	register uint64_t i;
 	
 	//by multiplication
@@ -296,8 +350,7 @@ static double definite_integral_trapezium(double lower, double upper, uint64_t n
     double dx = (upper - lower) / n;
     uint32_t i;
 
-    summation += f(lower) / 2;
-    summation += f(upper) / 2;
+    summation += (f(lower) + f(upper)) / 2;
     
     for(i = 1; i < n; ++i)
     {
@@ -318,7 +371,7 @@ static double first_symmetric_derivative(double x, double h, double f(double))
 
 static double definite_integral_proportion(double lower, double upper, uint64_t n, double f(double))
 {
-	return first_symmetric_derivative(exp10(log10(upper / lower) * (1.0 / n)) - 1, H_APPROACH_0, f) /
+	return first_symmetric_derivative(exp(log(upper / lower) * (1.0 / n)) - 1, H_APPROACH_0, f) /
 		   first_symmetric_derivative(1.0 / n, H_APPROACH_0, f);
 }
 
