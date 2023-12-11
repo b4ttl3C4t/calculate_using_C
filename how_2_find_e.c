@@ -22,7 +22,6 @@ void by_Taylor_expansion(void);
 
 inline static double 	fast_power(double, uint64_t);
 inline static uint64_t	factorial(uint32_t);
-inline static double 	iterative_bisect_method(double);
 
 inline static double definite_integral_right(double, double, uint64_t, double(double));
 inline static double definite_integral_midpoint(double, double, uint64_t, double(double));
