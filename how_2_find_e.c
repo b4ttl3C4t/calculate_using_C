@@ -224,7 +224,7 @@ void by_compound_interest(void)
 */
 	// By bit-by-bit method.
 	begin = clock();
-	n = 2000000;
+	n = UINT_MAX;
 	product = fast_power(1 + 1.0 / n, n);
 	end = clock();
 	printf("by_compound_interest::bit-by-bit:\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n",
@@ -234,9 +234,10 @@ void by_compound_interest(void)
 
 	// By iterative method.
 	begin = clock();
+	n = UINT_MAX;
 	product = 1.0;
-	term = 1 + 1.0 / 2000000;
-	for (i = 0; i < 2000000; ++i)
+	term = 1 + 1.0 / n;
+	for (i = 0; i < n; ++i)
 	{
 		product *= term;
 	}
@@ -249,7 +250,7 @@ void by_compound_interest(void)
 
 void by_Taylor_expansion(void)
 {
-	register double term, sum;
+	register double term, sum, temp;
 	register uint64_t i;
 /*
 	// By multiplication.
@@ -269,12 +270,16 @@ void by_Taylor_expansion(void)
 */
 	//by division
 	begin = clock();
-	term = 1.0;
-	sum = 1.0;
-    for(i = 1; i < 10; ++i)
+	term = sum = 1.0;
+    for(i = 1; i < UINT_MAX; ++i)
     {
     	term /= i;
+    	temp = sum;
     	sum += term;
+    	if(sum - temp < H_APPROACH_0)
+		{
+			break;
+		}
 	}
 	end = clock();
     printf("by_Taylor_expansion::division:\t\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
@@ -285,9 +290,14 @@ void by_Taylor_expansion(void)
 	//by factorial
 	begin = clock();
 	sum = 0;
-    for(i = 0; i < 10; ++i)
+    for(i = 0; i < UINT_MAX; ++i)
     {
-    	sum += 1.0 / factorial(i);
+    	term = sum;
+		sum += 1.0 / factorial(i);
+		if(sum - term < H_APPROACH_0)
+		{
+			break;
+		}
 	}
 	end = clock();
     printf("by_Taylor_expansion::factorial:\t\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n", 
