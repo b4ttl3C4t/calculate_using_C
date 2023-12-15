@@ -6,8 +6,8 @@
 #include <math.h>
 #include <time.h>
 
-#define H_APPROACH_0 0.0000001
-#define UPPER_LIMIT  1000000000000000000.0
+#define H_APPROACH_0 0.000001
+#define UPPER_LIMIT  1E18
 
 #define CLOCK_DIFF (end - begin)
 #define TIME_DIFF ((double)(end - begin) / CLOCKS_PER_SEC)
@@ -36,11 +36,10 @@ double f(double x)
 
 int main(void)
 {
-	//printf("%lf\n", definite_integral_proportion(1.0, 1000000000, 1000000000, f));	return;
-	by_Taylor_expansion();
-	by_compound_interest();
 	binary_by_Riemann_sum();
-	exhaustive_by_Riemann_sum();
+	by_compound_interest();
+	by_Taylor_expansion();
+	//exhaustive_by_Riemann_sum();
 }
 
 void exhaustive_by_Riemann_sum(void)
@@ -143,11 +142,13 @@ void binary_by_Riemann_sum(void)
 	{
 		mid = (lower + upper) / 2;
 		temp = definite_integral_trapezium(1.0, mid, 870, f);
+		/* The loop is going to be terminated
+		 * when the difference between the area of the define integral and constant 1 is less than a small number.
+		 */
 		if (fabs(temp - 1.0) < H_APPROACH_0)
 		{
 			break;
 		}
-		// printf("|%lf %lf|\n", temp, mid);
 		if (temp < 1.0)
 			lower = mid;
 		else
@@ -158,7 +159,7 @@ void binary_by_Riemann_sum(void)
 		   mid,
 		   TIME_DIFF,
 		   (uintmax_t)CLOCK_DIFF);
-
+/* 
 	// By midpoint.
 	begin = clock();
 	lower = 1.0;
@@ -206,11 +207,12 @@ void binary_by_Riemann_sum(void)
 		   mid,
 		   TIME_DIFF,
 		   (uintmax_t)CLOCK_DIFF);
+*/ 
 }
 
 void by_compound_interest(void)
 {
-	register double term, product;
+	register double prev, product;
 	register uint64_t i, n;
 /*
 	// By log10() and exp10() (table-search method).
@@ -225,13 +227,26 @@ void by_compound_interest(void)
 	// By bit-by-bit method.
 	begin = clock();
 	n = UINT_MAX;
-	product = fast_power(1 + 1.0 / n, n);
+	prev = 0.0;
+	for(i = 1; i <= n; ++i)
+	{
+		product = fast_power(1.0 + 1.0 / i, i);
+		/* The loop is going to be terminated
+		 * when the latter term and the former one is identical.
+		 * (The convergence speed is too slow to use *product - prev < (SMALL_NUMBER)*)
+		 */
+		if(product == prev)
+		{
+			break;
+		}
+		prev = product;
+	}
 	end = clock();
-	printf("by_compound_interest::bit-by-bit:\t result:|%.7lf| sec:|%lf| clock:|%llu|.\n",
+	printf("by_compound_interest::bit-by-bit:\t result:|%.7lf| sec:|%lf| clock:|%llu|\n",
 		   product,
 		   TIME_DIFF,
 		   (uintmax_t)CLOCK_DIFF);
-
+/* 
 	// By iterative method.
 	begin = clock();
 	n = UINT_MAX;
@@ -246,6 +261,7 @@ void by_compound_interest(void)
 		   product,
 		   TIME_DIFF,
 		   (uintmax_t)CLOCK_DIFF);
+*/ 
 }
 
 void by_Taylor_expansion(void)
@@ -276,6 +292,9 @@ void by_Taylor_expansion(void)
     	term /= i;
     	temp = sum;
     	sum += term;
+    	/* Each more term could make the *sum* more accurate.
+    	 * Therefore, check the difference of both could determine the time to break out of the loop.
+    	 */
     	if(sum - temp < H_APPROACH_0)
 		{
 			break;
@@ -286,7 +305,7 @@ void by_Taylor_expansion(void)
 			sum,
 			TIME_DIFF, 
 			(uintmax_t)CLOCK_DIFF);
-	
+/* 
 	//by factorial
 	begin = clock();
 	sum = 0;
@@ -304,6 +323,7 @@ void by_Taylor_expansion(void)
 			sum,
 			TIME_DIFF, 
 			(uintmax_t)CLOCK_DIFF);
+*/ 
 }
 
 // Calculating definite integral by right side height.
