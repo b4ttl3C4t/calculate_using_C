@@ -11,7 +11,7 @@
 #define K1 WIDTH*K2*5/(50)
 
 #define BUF_SIZE 50
-#define SPACE_SIZE  20 
+#define SPACE_SIZE  40 
 #define VOLUME_SIZE SPACE_SIZE / 2 
 
 // Construct space data type.
@@ -44,7 +44,7 @@ static screen_t screen;
 inline static void initial_object (void);
 inline static void reset_buffer   (void);
 inline static void for_each_vector(void);
-inline static bool probe_screen   (int, int, int);
+inline static bool probe_screen   (void);
 inline static void render_frame   (int, int, int, float, float, float, float);
 inline static void output_screen  (void);
 inline static void bias_angle     (float, float);
@@ -59,9 +59,9 @@ void main()
         reset_buffer();
         for_each_vector();
         
-        bias_angle(0.05, 0.0);    // Rotate about x-axis.
+        //bias_angle(0.05, 0.0);    // Rotate about x-axis.
         //bias_angle(0.0, 0.05);    // Rotate about z-axis.
-        //bias_angle(0.05, 0.05);    // Rotate about z-axis and x-azis.
+        bias_angle(0.05, 0.05);    // Rotate about z-axis and x-azis.
         
 		output_screen();
     }
@@ -72,16 +72,17 @@ inline static void initial_object(void)
     int i, j, k;
     
     memset(space.object, ' ', SPACE_SIZE * SPACE_SIZE * SPACE_SIZE);
-    for(i = 0; i < VOLUME_SIZE; ++i)
+    for(i = 0; i < VOLUME_SIZE/2; ++i)
     {
-        for(j = 0; j < VOLUME_SIZE; ++j)
+        for(j = 0; j < VOLUME_SIZE/2; ++j)
         {
-            for(k = 0; k < VOLUME_SIZE; ++k)
+            for(k = 0; k < VOLUME_SIZE/2; ++k)
             {
                 space.object[i][j][k] = '=';
             }
         }
     }
+    
     printf("\x1b[2J");
 }
 
@@ -106,7 +107,8 @@ void for_each_vector(void)
         {
             for(k = 0; k < SPACE_SIZE; ++k)
             {
-                render_frame(i-VOLUME_SIZE, j-VOLUME_SIZE, k-VOLUME_SIZE, sin_theta, cos_theta, sin_phi, cos_phi);    // Rotate about space.
+                //render_frame(i-VOLUME_SIZE, j-VOLUME_SIZE, k-VOLUME_SIZE, sin_theta, cos_theta, sin_phi, cos_phi);    // Rotate about space.
+                render_frame(i-VOLUME_SIZE/2, j-VOLUME_SIZE/2, k-VOLUME_SIZE/2, sin_theta, cos_theta, sin_phi, cos_phi);
                 //render_frame(i, j, k, sin_theta, cos_theta, sin_phi, cos_phi);    // Rotate about screen.
             }
         }
@@ -133,28 +135,29 @@ void render_frame(int i, int j, int k,
 	   ((int)space.jp <= -VOLUME_SIZE || (int)space.jp >= VOLUME_SIZE) ||
 	   ((int)space.kp <= -VOLUME_SIZE || (int)space.kp >= VOLUME_SIZE))
 	   return;
-    
+	
     // Project on screen.
-    screen.xp = (int)(K1*space.ip*space.inv_kp);
-    screen.yp = (int)(K1*space.jp*space.inv_kp);
+    screen.xp = (int)(K1*space.ip*space.inv_kp/2);
+    screen.yp = (int)(K1*space.jp*space.inv_kp/2);
     
     // Write to the output buffer.
-    if (probe_screen(space.ip, space.jp, space.kp) && 
+    if (probe_screen() && 
+        space.object[(int)space.ip][(int)space.jp][(int)space.kp] == '=' && 
         space.inv_kp > screen.depth[screen.xp][screen.yp])
     {
         screen.depth [screen.xp][screen.yp] = space.inv_kp;
-        screen.output[screen.xp][screen.yp] = "  ..,,~~::;;==!!**###$$$@@@"[(int) screen.lumin]; 
+        screen.output[screen.xp][screen.yp] = "   ...,,,~~~:::;;;===!!!***###$$$@@@"[(int) screen.lumin]; 
     }
 }
 
-bool probe_screen(int i, int j, int k)
+bool probe_screen(void)
 {
     return screen.xp > 0        && 
            screen.xp < BUF_SIZE && 
            screen.yp > 0        && 
            screen.yp < BUF_SIZE && 
            screen.lumin >= 0    && 
-           space.object[i][j][k] == '=';
+           screen.lumin <= 35;
 }
 
 void output_screen(void)
