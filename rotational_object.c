@@ -3,13 +3,14 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 
-#define WIDTH  25
-#define HEIGHT 25
+#define WIDTH  30
+#define HEIGHT 30
 #define K2 10 
-#define K1 WIDTH*K2*3/(25)
+#define K1 WIDTH*K2*5/(50)
 
-#define BUF_SIZE 100
+#define BUF_SIZE 50
 #define SPACE_SIZE  20 
 #define VOLUME_SIZE SPACE_SIZE / 2 
 
@@ -40,23 +41,29 @@ static float    sin_theta, cos_theta, sin_phi, cos_phi;
 static space_t  space;
 static screen_t screen;
 
-inline static void initial_object(void);
-inline static void reset_buffer(void);
+inline static void initial_object (void);
+inline static void reset_buffer   (void);
 inline static void for_each_vector(void);
-inline static bool probe_screen(int, int, int);
-inline static void render_frame(int, int, int, float, float, float, float);
-inline static void output_screen(void);
-inline static void bias_angle(float, float);
+inline static bool probe_screen   (int, int, int);
+inline static void render_frame   (int, int, int, float, float, float, float);
+inline static void output_screen  (void);
+inline static void bias_angle     (float, float);
 
 void main()
 {
     initial_object();
+    clock_t count;
+    
     while(1)
     {
         reset_buffer();
         for_each_vector();
-        bias_angle(0.05, 0.05);
-        output_screen();
+        
+        bias_angle(0.05, 0.0);    // Rotate about x-axis.
+        //bias_angle(0.0, 0.05);    // Rotate about z-axis.
+        //bias_angle(0.05, 0.05);    // Rotate about z-axis and x-azis.
+        
+		output_screen();
     }
 }
 
@@ -71,7 +78,7 @@ inline static void initial_object(void)
         {
             for(k = 0; k < VOLUME_SIZE; ++k)
             {
-                space.object[3+i][3+j][3+k] = '=';
+                space.object[i][j][k] = '=';
             }
         }
     }
@@ -93,13 +100,14 @@ inline static void reset_buffer(void)
 void for_each_vector(void)
 {
     int i, j, k;
-    for(i = 0; i < VOLUME_SIZE; ++i)
+    for(i = 0; i < SPACE_SIZE; ++i)
     {
-        for(j = 0; j < VOLUME_SIZE; ++j)
+        for(j = 0; j < SPACE_SIZE; ++j)
         {
-            for(k = 0; k < VOLUME_SIZE; ++k)
+            for(k = 0; k < SPACE_SIZE; ++k)
             {
-                render_frame(i, j, k, sin_theta, cos_theta, sin_phi, cos_phi);
+                render_frame(i-VOLUME_SIZE, j-VOLUME_SIZE, k-VOLUME_SIZE, sin_theta, cos_theta, sin_phi, cos_phi);    // Rotate about space.
+                //render_frame(i, j, k, sin_theta, cos_theta, sin_phi, cos_phi);    // Rotate about screen.
             }
         }
     }
@@ -111,26 +119,31 @@ void render_frame(int i, int j, int k,
     // Rotate about x-axis and z-axis.
     space.ip = -j*sin_phi*cos_theta + k*sin_phi*sin_theta + i*cos_phi;
     space.jp =  j*cos_phi*cos_theta - k*cos_phi*sin_theta + i*sin_phi;
-    space.kp =  j*sin_theta + k*cos_theta + K2;
+    space.kp =  j*sin_theta + k*cos_theta + K2-3;
     space.inv_kp = 1.0 / space.kp;
     
     // Compute the luminance for each vector of the object.
-    screen.lumin = 15 + 
-                   ( j*cos_phi*cos_theta - 
-                     k*cos_phi*sin_theta + 
-                     i*sin_phi - 
-                    (j*sin_theta + k*cos_theta + K2));
+    screen.lumin = 20 + 
+                   ( space.jp*cos_phi*cos_theta - 
+                     space.kp*cos_phi*sin_theta + 
+                     space.ip*sin_phi - 
+                    (space.jp*sin_theta + space.kp*cos_theta + K2));
+    
+    if(((int)space.ip <= -VOLUME_SIZE || (int)space.ip >= VOLUME_SIZE) ||
+	   ((int)space.jp <= -VOLUME_SIZE || (int)space.jp >= VOLUME_SIZE) ||
+	   ((int)space.kp <= -VOLUME_SIZE || (int)space.kp >= VOLUME_SIZE))
+	   return;
     
     // Project on screen.
     screen.xp = (int)(K1*space.ip*space.inv_kp);
     screen.yp = (int)(K1*space.jp*space.inv_kp);
     
     // Write to the output buffer.
-    if (probe_screen(i, j, k) && 
+    if (probe_screen(space.ip, space.jp, space.kp) && 
         space.inv_kp > screen.depth[screen.xp][screen.yp])
     {
         screen.depth [screen.xp][screen.yp] = space.inv_kp;
-        screen.output[screen.xp][screen.yp] = "..,-~:;=!**##$$@@"[(int) screen.lumin]; 
+        screen.output[screen.xp][screen.yp] = "  ..,,~~::;;==!!**###$$$@@@"[(int) screen.lumin]; 
     }
 }
 
@@ -140,6 +153,7 @@ bool probe_screen(int i, int j, int k)
            screen.xp < BUF_SIZE && 
            screen.yp > 0        && 
            screen.yp < BUF_SIZE && 
+           screen.lumin >= 0    && 
            space.object[i][j][k] == '=';
 }
 
